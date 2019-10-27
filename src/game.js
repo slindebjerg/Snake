@@ -1,7 +1,7 @@
 class Game{
   constructor() {
     this.snake = new Snake;
-    this.score_comment = new ScoreComment;
+    // this.score_comment = new ScoreComment;
     
     this.setup = {
       game_speed: 100,
@@ -63,7 +63,7 @@ class Game{
   increaseScore() {
     this.state.score += 10;
     document.getElementById('score').innerHTML = this.state.score;
-    this.score_comment.updateComment(this.state.score);
+    // this.score_comment.updateComment(this.state.score);
   }
 
   didEatFood(snakeHeadX, snakeHeadY) {

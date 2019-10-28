@@ -1,14 +1,13 @@
 class Game{
   constructor() {
     this.snake = new Snake;
-    // this.score_comment = new ScoreComment;
+    this.score_comment = new ScoreComment;
+    this.ctx = gameCanvas.getContext("2d");
     
     this.setup = {
       game_speed: 100,
       canvas_border_color: 'black',
       canvas_background_color: 'white',
-      snake_color: 'lightgreen',
-      snake_border_color: 'darkgreen',
       food_color: 'red',
       food_border_color: 'darkred',
     }
@@ -23,26 +22,47 @@ class Game{
     }
   }
 
+  restartGame() {
+    this.snake.body = [
+      {x: 150, y: 150},
+      {x: 140, y: 150},
+      {x: 130, y: 150},
+      {x: 120, y: 150},
+      {x: 110, y: 150},
+    ]
+
+    this.state = {
+      changingDirection: false,
+      score: 0,
+      foodX: this.randomTen(0, gameCanvas.width - 10),
+      foodY: this.randomTen(0, gameCanvas.width - 10),
+      dX: 10,
+      dY: 0,
+    }
+
+    document.getElementById('score').innerHTML = this.state.score;
+  }
+
   clearCanvas() {
     /**
      * Change the background colour of the canvas to CANVAS_BACKGROUND_COLOUR and
      * draw a border around it
      */
     //  Select the colour to fill the drawing
-    ctx.fillStyle = this.setup.canvas_background_color;
+    this.ctx.fillStyle = this.setup.canvas_background_color;
     //  Select the colour for the border of the canvas
-    ctx.strokestyle = this.setup.canvas_border_color;
+    this.ctx.strokestyle = this.setup.canvas_border_color;
     // Draw a "filled" rectangle to cover the entire canvas
-    ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+    this.ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
     // Draw a "border" around the entire canvas
-    ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+    this.ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
   }
 
   drawFood() {
-    ctx.fillStyle = this.setup.food_color;
-    ctx.strokestyle = this.setup.food_border_color;
-    ctx.fillRect(this.state.foodX, this.state.foodY, 10, 10);
-    ctx.strokeRect(this.state.foodX, this.state.foodY, 10, 10);
+    this.ctx.fillStyle = this.setup.food_color;
+    this.ctx.strokestyle = this.setup.food_border_color;
+    this.ctx.fillRect(this.state.foodX, this.state.foodY, 10, 10);
+    this.ctx.strokeRect(this.state.foodX, this.state.foodY, 10, 10);
   }
 
   advanceSnake() {  
@@ -63,28 +83,19 @@ class Game{
   increaseScore() {
     this.state.score += 10;
     document.getElementById('score').innerHTML = this.state.score;
-    // this.score_comment.updateComment(this.state.score);
+    this.score_comment.updateComment(this.state.score);
   }
 
   didEatFood(snakeHeadX, snakeHeadY) {
     return snakeHeadX === this.state.foodX && snakeHeadY === this.state.foodY;
   }
 
-  didGameEnd() {
-  /**
-   * Returns true if the head of the snake touched another part of the game
-   * or any of the walls
-   */
-    for (let i = 4; i < this.snake.body.length; i++) {
-      if (this.snake.body[i].x === this.snake.body[0].x &&
-          this.snake.body[i].y === this.snake.body[0].y) return true
-    }
-    const hitLeftWall = this.snake.body[0].x < 0;
-    const hitRightWall = this.snake.body[0].x > gameCanvas.width - 10;
-    const hitTopWall = this.snake.body[0].y < 0;
-    const hitBottomWall = this.snake.body[0].y > gameCanvas.height - 10;
-    return hitLeftWall || hitRightWall || hitTopWall || hitBottomWall
-  }
+  // didGameEnd() {
+  // /**
+  //  * Returns true if the head of the snake touched another part of the game
+  //  * or any of the walls
+  //  */
+  // }
 
   randomTen(min, max) {
     /**
@@ -113,16 +124,7 @@ class Game{
   }
 
   drawSnake() {
-    /**
-     * Draws the snake on the canvas
-     */
-    this.snake.body.forEach((element) => {
-        ctx.fillStyle = this.snake.color,
-        ctx.strokestyle = this.snake.border_color,
-        ctx.fillRect(element.x, element.y, 10, 10),
-        ctx.strokeRect(element.x, element.y, 10, 10)
-      }
-    )
+    this.snake.draw(this.ctx);
   }
 
   changeDirection(state) {

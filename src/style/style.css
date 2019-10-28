@@ -21,3 +21,9 @@
   color: grey;
   text-align: center;
 }
+
+#restart{
+  margin: auto;
+  display: block;
+  font-size: 2em
+}
